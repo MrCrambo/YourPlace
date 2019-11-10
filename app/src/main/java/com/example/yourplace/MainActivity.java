@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        code = Objects.requireNonNull(getIntent().getExtras()).getString(LoginActivity.EXTRA_ID);
+        code = Objects.requireNonNull(getIntent().getExtras()).getString(LoginActivity.EXTRA_CODE);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

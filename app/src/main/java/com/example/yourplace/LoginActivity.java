@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password = "";
 
     private static String GET_URL = "https://www.alarstudios.com/test/auth.cgi?username=%s&password=%s";
-    public static final String EXTRA_ID = "com.example.yourplace.code";
+    public static final String EXTRA_CODE = "com.example.yourplace.code";
     private final static Integer PORT = 443;
 
     @Override
@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (code != "-1"){
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra(EXTRA_ID, code);
+                    intent.putExtra(EXTRA_CODE, code);
                     startActivity(intent);
                 } else {
                     //TODO change toast to something new
