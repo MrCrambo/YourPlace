@@ -1,6 +1,7 @@
 package com.example.yourplace;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,11 +44,18 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
     private int visibleThreshold = 5;
     private int lastVisibleItemPosition, totalItemsCount;
+    private RecyclerView recyclerView;
 
+    public static final String EXTRA_ID = "com.example.yourplace.id";
+    public static final String EXTRA_NAME = "com.example.yourplace.name";
+    public static final String EXTRA_COUNTRY = "com.example.yourplace.country";
+    public static final String EXTRA_LAT = "com.example.yourplace.lat";
+    public static final String EXTRA_LON = "com.example.yourplace.lon";
 
     Adapter(Activity activity, RecyclerView recyclerView, List<MapPointsClass> data) {
         this.activity = activity;
         this.data = data;
+        this.recyclerView = recyclerView;
 
         LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -58,8 +66,6 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 assert manager != null;
                 totalItemsCount = manager.getItemCount();
                 lastVisibleItemPosition = manager.findLastVisibleItemPosition();
-                System.out.println("we are here!!!!");
-                System.out.println(lastVisibleItemPosition);
                 if (!isLoading && totalItemsCount < (lastVisibleItemPosition + visibleThreshold)){
                     if (loadMore != null)
                         loadMore.onLoadMore();
@@ -83,6 +89,16 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         if (viewType == VIEW_TYPE_ITEM){
             View view = LayoutInflater.from(activity).inflate(R.layout.element_view, viewGroup, false);
+            view.setOnClickListener(v -> {
+                MapPointsClass mapPointsClass = data.get(recyclerView.getChildLayoutPosition(v));
+                Intent intent = new Intent(activity, MapActivity.class);
+                intent.putExtra(EXTRA_ID, mapPointsClass.getId());
+                intent.putExtra(EXTRA_NAME, mapPointsClass.getName());
+                intent.putExtra(EXTRA_COUNTRY, mapPointsClass.getCountry());
+                intent.putExtra(EXTRA_LAT, mapPointsClass.getLat());
+                intent.putExtra(EXTRA_LON, mapPointsClass.getLon());
+                view.getContext().startActivity(intent);
+            });
             return new ItemViewHolder(view);
         } else if (viewType == VIEW_TYPE_LOADING) {
             View view = LayoutInflater.from(activity).inflate(R.layout.loading_view, viewGroup, false);
