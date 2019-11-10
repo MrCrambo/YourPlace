@@ -58,6 +58,8 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 assert manager != null;
                 totalItemsCount = manager.getItemCount();
                 lastVisibleItemPosition = manager.findLastVisibleItemPosition();
+                System.out.println("we are here!!!!");
+                System.out.println(lastVisibleItemPosition);
                 if (!isLoading && totalItemsCount < (lastVisibleItemPosition + visibleThreshold)){
                     if (loadMore != null)
                         loadMore.onLoadMore();

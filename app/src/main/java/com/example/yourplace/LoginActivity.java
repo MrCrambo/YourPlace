@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show());
             }
         }).start();
     }

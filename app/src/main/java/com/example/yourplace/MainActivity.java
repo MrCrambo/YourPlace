@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, recyclerView, mapPointsClass);
         recyclerView.setAdapter(adapter);
+        sendGETRequest();
 
         adapter.setLoadMore(() -> {
             mapPointsClass.add(null);
@@ -60,16 +61,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendGETRequest(){
-
-        System.out.println("we are here!");
-
         new Thread(() -> {
             try {
                 URL urlObject = new URL(String.format(GET_URL, code, pageNumber));
 
                 // socket without ssl returns 301 error, so using ssl socket for working with https
                 Socket socket = SSLSocketFactory.getDefault().createSocket(urlObject.getHost(), PORT);
-
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
                 printWriter.println("GET " + urlObject.getFile() + " HTTP/1.0\r\nHost: " + urlObject.getHost()+ "\r\n\r\n");
                 printWriter.flush();
@@ -79,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 while (responseStr != null && responseStr != "") {
                     if (responseStr.contains("status")){
                         JSONObject obj = new JSONObject(responseStr);
-                        System.out.println(obj.get("status"));
                         if (obj.get("status").equals("ok")){
 
                             for (int i=0; i < obj.getJSONArray("data").length(); i++) {
@@ -88,8 +84,10 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             handler.post(() -> {
-                                mapPointsClass.remove(mapPointsClass.size() - 11);
-                                adapter.notifyItemRemoved(mapPointsClass.size());
+                                if (mapPointsClass.size() > 10) {
+                                    mapPointsClass.remove(mapPointsClass.size() - 11);
+                                    adapter.notifyItemRemoved(mapPointsClass.size());
+                                }
                                 adapter.notifyDataSetChanged();
                                 adapter.setLoaded();
                             });
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 printWriter.close();
                 socket.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show());
             }
         }).start();
     }
