@@ -17,6 +17,8 @@ import java.net.Socket;
 import java.net.URL;
 import javax.net.ssl.SSLSocketFactory;
 
+import hari.bounceview.BounceView;
+
 public class LoginActivity extends AppCompatActivity {
 
     EditText loginEditText;
@@ -26,9 +28,9 @@ public class LoginActivity extends AppCompatActivity {
     private String login = "";
     private String password = "";
 
-    private String GET_URL = "https://www.alarstudios.com/test/auth.cgi?username=%s&password=%s";
-    private static final String EXTRA_ID = "com.example.yourplace.code";
-    final static Integer PORT = 443;
+    private static String GET_URL = "https://www.alarstudios.com/test/auth.cgi?username=%s&password=%s";
+    public static final String EXTRA_ID = "com.example.yourplace.code";
+    private final static Integer PORT = 443;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginButton = findViewById(R.id.loginButton);
+        BounceView.addAnimTo(loginButton);
         loginButton.setOnClickListener(view -> {
             if (!login.isEmpty() && !password.isEmpty()){
                 sendGETRequest(login, password);
@@ -85,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendGETRequest(String correctLogin, String correctPassword){
 
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             try {
                 URL urlObject = new URL(String.format(GET_URL, correctLogin, correctPassword));
                 String code = "-1";
@@ -119,13 +122,12 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     //TODO change toast to something new
-                    runOnUiThread(() -> Toast.makeText(this, "You entered wrong login and password", Toast.LENGTH_LONG).show());
+                    runOnUiThread(() -> Toast.makeText(this, "You entered wrong login or password", Toast.LENGTH_LONG).show());
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
-        thread.start();
+        }).start();
     }
 }
