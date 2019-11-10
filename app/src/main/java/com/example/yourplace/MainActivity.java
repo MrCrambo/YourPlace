@@ -1,12 +1,16 @@
 package com.example.yourplace;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.example.yourplace.Interface.ILoadMore;
 
 import org.json.JSONObject;
 
@@ -17,6 +21,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -29,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private final static Integer PORT = 443;
 
     RecyclerView recyclerView;
-    List<MapPointsClass> mapPointsClass;
+    Adapter adapter;
+    List<MapPointsClass> mapPointsClass = new ArrayList<>();
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +45,23 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        code = getIntent().getExtras().getString(LoginActivity.EXTRA_ID);
-        mapPointsClass = new ArrayList<>();
+        code = Objects.requireNonNull(getIntent().getExtras()).getString(LoginActivity.EXTRA_ID);
 
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(this, recyclerView, mapPointsClass);
+        recyclerView.setAdapter(adapter);
 
-        sendGETRequest();
+        adapter.setLoadMore(() -> {
+            mapPointsClass.add(null);
+            recyclerView.post(() -> adapter.notifyItemInserted(mapPointsClass.size() - 1));
+            sendGETRequest();
+        });
     }
 
     private void sendGETRequest(){
+
+        System.out.println("we are here!");
 
         new Thread(() -> {
             try {
@@ -64,19 +79,26 @@ public class MainActivity extends AppCompatActivity {
                 while (responseStr != null && responseStr != "") {
                     if (responseStr.contains("status")){
                         JSONObject obj = new JSONObject(responseStr);
+                        System.out.println(obj.get("status"));
                         if (obj.get("status").equals("ok")){
+
                             for (int i=0; i < obj.getJSONArray("data").length(); i++) {
                                 JSONObject mapItem = obj.getJSONArray("data").getJSONObject(i);
                                 mapPointsClass.add(new MapPointsClass(mapItem.getString("id"), mapItem.getString("name"), mapItem.getString("country"), mapItem.getDouble("lat"), mapItem.getDouble("lon")));
                             }
 
-                            System.out.println(mapPointsClass.get(0).getName());
+                            handler.post(() -> {
+                                mapPointsClass.remove(mapPointsClass.size() - 11);
+                                adapter.notifyItemRemoved(mapPointsClass.size());
+                                adapter.notifyDataSetChanged();
+                                adapter.setLoaded();
+                            });
                         }
                         break;
                     }
-                    System.out.println(responseStr);
                     responseStr = response.readLine();
                 }
+                pageNumber++;
                 response.close();
                 printWriter.close();
                 socket.close();
