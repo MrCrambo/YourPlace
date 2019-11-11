@@ -27,9 +27,9 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    // for GET request
     private String code;
     private int pageNumber = 1;
-
     private static String GET_URL = "https://www.alarstudios.com/test/data.cgi?code=%s&p=%s";
     private final static Integer PORT = 443;
 
@@ -41,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         code = Objects.requireNonNull(getIntent().getExtras()).getString(LoginActivity.EXTRA_CODE);
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         sendGETRequest();
 
+        // for loading next 10 elements from server
         adapter.setLoadMore(() -> {
             mapPointsClass.add(null);
             recyclerView.post(() -> adapter.notifyItemInserted(mapPointsClass.size() - 1));
@@ -80,10 +80,17 @@ public class MainActivity extends AppCompatActivity {
 
                             for (int i=0; i < obj.getJSONArray("data").length(); i++) {
                                 JSONObject mapItem = obj.getJSONArray("data").getJSONObject(i);
-                                mapPointsClass.add(new MapPointsClass(mapItem.getString("id"), mapItem.getString("name"), mapItem.getString("country"), mapItem.getDouble("lat"), mapItem.getDouble("lon")));
+                                mapPointsClass.add(new MapPointsClass(
+                                        mapItem.getString("id"),
+                                        mapItem.getString("name"),
+                                        mapItem.getString("country"),
+                                        mapItem.getDouble("lat"),
+                                        mapItem.getDouble("lon")));
                             }
 
                             handler.post(() -> {
+                                // notify recycler view about list changes and adding elements on screen
+                                // not possible in this thread
                                 if (mapPointsClass.size() > 10) {
                                     mapPointsClass.remove(mapPointsClass.size() - 11);
                                     adapter.notifyItemRemoved(mapPointsClass.size());
@@ -108,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         // intent to the main screen of phone
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);

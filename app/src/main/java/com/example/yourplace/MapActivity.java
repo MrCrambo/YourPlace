@@ -1,13 +1,10 @@
 package com.example.yourplace;
 
 import android.os.Bundle;
-
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -15,7 +12,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.Objects;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -32,6 +28,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         id = bundle.getString(Adapter.EXTRA_ID);
         name = bundle.getString(Adapter.EXTRA_NAME);
         country = bundle.getString(Adapter.EXTRA_COUNTRY);
@@ -40,8 +37,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         TextView idText = findViewById(R.id.id);
         idText.setText("ID : " + id);
+
         TextView nameText = findViewById(R.id.name);
         nameText.setText("Name : " + name);
+
         TextView countryText = findViewById(R.id.country);
         countryText.setText("Country : " + country);
 
@@ -50,7 +49,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
-
     }
 
     @Override
@@ -58,5 +56,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(name));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 11f));
     }
-
 }

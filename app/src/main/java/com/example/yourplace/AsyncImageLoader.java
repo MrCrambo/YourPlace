@@ -1,5 +1,6 @@
 package com.example.yourplace;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,7 +11,8 @@ import java.net.URL;
 
 public class AsyncImageLoader extends AsyncTask<ImageView, Void, Bitmap> {
 
-    ImageView imageView = null;
+    @SuppressLint("StaticFieldLeak")
+    private ImageView imageView = null;
 
     @Override
     protected Bitmap doInBackground(ImageView... imageViews) {
@@ -33,6 +35,7 @@ public class AsyncImageLoader extends AsyncTask<ImageView, Void, Bitmap> {
             if (in != null) in.close();
         } catch (IOException e1) {
             e1.printStackTrace();
+            // Nothing happens, image stands gray
         }
 
         return bitmap;

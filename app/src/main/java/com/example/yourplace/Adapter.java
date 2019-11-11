@@ -18,7 +18,7 @@ class LoadingViewHolder extends RecyclerView.ViewHolder {
 
     ProgressBar progressBar;
 
-    public LoadingViewHolder(@NonNull View itemView) {
+    LoadingViewHolder(@NonNull View itemView) {
         super(itemView);
 
         progressBar = itemView.findViewById(R.id.progress_bar);
@@ -30,7 +30,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder{
     TextView textTitle;
     ImageView imageView;
 
-    public ItemViewHolder(@NonNull View itemView) {
+    ItemViewHolder(@NonNull View itemView) {
         super(itemView);
         textTitle = itemView.findViewById(R.id.card_text_view);
         imageView = itemView.findViewById(R.id.card_image_view);
@@ -42,7 +42,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0, VIEW_TYPE_LOADING = 1;
 
     private List<MapPointsClass> data;
-    ILoadMore loadMore;
+    private ILoadMore loadMore;
     private boolean isLoading;
     private Activity activity;
     private int visibleThreshold = 5;
@@ -84,7 +84,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
-    public void setLoadMore(ILoadMore loadMore) {
+    void setLoadMore(ILoadMore loadMore) {
         this.loadMore = loadMore;
     }
 
@@ -129,7 +129,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.size();
     }
 
-    public void setLoaded(){
+    void setLoaded(){
         isLoading = false;
     }
 }

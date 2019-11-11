@@ -21,13 +21,14 @@ import hari.bounceview.BounceView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // for ui elements
     EditText loginEditText;
     EditText passwordEditText;
     Button loginButton;
-
     private String login = "";
     private String password = "";
 
+    // for GET request
     private static String GET_URL = "https://www.alarstudios.com/test/auth.cgi?username=%s&password=%s";
     public static final String EXTRA_CODE = "com.example.yourplace.code";
     private final static Integer PORT = 443;
@@ -121,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_CODE, code);
                     startActivity(intent);
                 } else {
-                    //TODO change toast to something new
                     runOnUiThread(() -> Toast.makeText(this, "You entered wrong login or password", Toast.LENGTH_LONG).show());
                 }
 
