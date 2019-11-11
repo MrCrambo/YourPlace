@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +44,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         nameText.setText("Name : " + name);
         TextView countryText = findViewById(R.id.country);
         countryText.setText("Country : " + country);
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> onBackPressed());
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_view);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
