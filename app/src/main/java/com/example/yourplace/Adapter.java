@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -27,10 +28,12 @@ class LoadingViewHolder extends RecyclerView.ViewHolder {
 class ItemViewHolder extends RecyclerView.ViewHolder{
 
     TextView textTitle;
+    ImageView imageView;
 
     public ItemViewHolder(@NonNull View itemView) {
         super(itemView);
         textTitle = itemView.findViewById(R.id.card_text_view);
+        imageView = itemView.findViewById(R.id.card_image_view);
     }
 }
 
@@ -51,6 +54,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String EXTRA_COUNTRY = "com.example.yourplace.country";
     public static final String EXTRA_LAT = "com.example.yourplace.lat";
     public static final String EXTRA_LON = "com.example.yourplace.lon";
+    private final String IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/8/80/Knut_IMG_8095.jpg";
 
     Adapter(Activity activity, RecyclerView recyclerView, List<MapPointsClass> data) {
         this.activity = activity;
@@ -112,6 +116,8 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof ItemViewHolder){
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
             viewHolder.textTitle.setText(data.get(position).getName());
+            viewHolder.imageView.setTag(IMAGE_URL);
+            new AsyncImageLoader().execute(viewHolder.imageView);
         } else if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.progressBar.setIndeterminate(true);
